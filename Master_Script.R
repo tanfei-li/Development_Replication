@@ -106,5 +106,6 @@ J_vars <- "district"  # Fixed effects at the district level
 FE_vars <- "prop"  # Fixed effects (converted from `i.prop`)
 cluster_var <- "district"  # Clustering variable
 
+##############################
 
-
+source(file.path(rep_code, "table4.R")) 
