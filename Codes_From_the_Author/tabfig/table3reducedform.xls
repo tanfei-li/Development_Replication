@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Created>2025-03-06T21:40:11Z</Created>
+  <LastSaved>2025-03-06T21:40:11Z</LastSaved>
+  <Version>16.00</Version>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <AllowPNG/>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>6630</WindowHeight>
+  <WindowWidth>19200</WindowWidth>
+  <WindowTopX>32767</WindowTopX>
+  <WindowTopY>32767</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Calibri"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s62">
+   <Borders>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="Calibri"/>
+  </Style>
+  <Style ss:ID="s63">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="Calibri"/>
+   <NumberFormat/>
+  </Style>
+  <Style ss:ID="s64">
+   <Borders/>
+   <Font ss:FontName="Calibri"/>
+  </Style>
+  <Style ss:ID="s65">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Font ss:FontName="Calibri"/>
+   <NumberFormat/>
+  </Style>
+  <Style ss:ID="s66">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="Calibri"/>
+  </Style>
+  <Style ss:ID="s67">
+   <Alignment ss:Horizontal="Center" ss:Vertical="Bottom"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+   <Font ss:FontName="Calibri"/>
+   <NumberFormat/>
+  </Style>
+  <Style ss:ID="s68">
+   <Font ss:FontName="Calibri"/>
+   <NumberFormat/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Sheet1">
+  <Table ss:ExpandedColumnCount="6" ss:ExpandedRowCount="20" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="56" ss:DefaultRowHeight="13">
+   <Column ss:AutoFitWidth="0" ss:Width="220"/>
+   <Column ss:AutoFitWidth="0" ss:Width="126"/>
+   <Column ss:AutoFitWidth="0" ss:Width="58" ss:Span="3"/>
+   <Row ss:Index="2">
+    <Cell ss:StyleID="s62"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="String">(1)</Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="String">(2)</Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="String">(3)</Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="String">(4)</Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="String">(5)</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">VARIABLES</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">emigrants/population</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">emigrants/population</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">emigrants/population</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">emigrants/population</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">emigrants/population</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s62"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s63"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">rainfall shock</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.001087</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.001087</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.000392</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.000392</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.001087</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.000306)$^{***}$</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.001118)</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.000805)</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.001217)</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.000306)$^{***}$</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">rice price shock</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.008479</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.008479</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.008111</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.008111</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.008479</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.001591)$^{***}$</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.006438)</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.002598)$^{***}$</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.007228)</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.001591)$^{***}$</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">rainfall shock $\times$ Pareto exponent $\widehat{\lambda}$</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.000398</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.000398</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.000510)</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.000954)</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">rice price shock $\times$ Pareto exponent $\widehat{\lambda}$</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.000188</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.000188</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.001254)</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.002713)</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Constant</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.006320</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.006320</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.006317</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.006317</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.006320</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.000086)$^{***}$</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.000311)$^{***}$</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.000086)$^{***}$</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.000312)$^{***}$</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">(0.000086)$^{***}$</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String"></Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Observations</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">89,348</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">89,348</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">89,348</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">89,348</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">89,348</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">R-squared</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.004821</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.004821</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.004843</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.004843</Data></Cell>
+    <Cell ss:StyleID="s65"><Data ss:Type="String">0.004821</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s66"><Data ss:Type="String">Number of vid</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">44,674</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">44,674</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">44,674</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">44,674</Data></Cell>
+    <Cell ss:StyleID="s67"><Data ss:Type="String">44,674</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">Robust standard errors in parentheses</Data></Cell>
+   </Row>
+   <Row>
+    <Cell ss:StyleID="s68"><Data ss:Type="String">$^{***}$ p&lt;0.01, $^{**}$ p&lt;0.05, $^{*}$ p&lt;0.1</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.4921259845"/>
+    <Footer x:Margin="0.4921259845"/>
+    <PageMargins x:Bottom="0.984251969" x:Left="0.78740157499999996"
+     x:Right="0.78740157499999996" x:Top="0.984251969"/>
+   </PageSetup>
+   <Selected/>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+   <x:ProtectedObjects>False</x:ProtectedObjects>
+   <x:ProtectedScenarios>False</x:ProtectedScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>

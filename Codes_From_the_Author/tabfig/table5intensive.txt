@@ -1,0 +1,14 @@
+		(1)
+VARIABLES	LABELS	difference in log emigration rate
+		
+delta_RP_diff	$\Delta$ price shock	-0.134
+		(0.433)
+rain_cumdev_diff	$\Delta$ rainfall shock	0.086
+		(0.133)
+Constant	Constant	0.185
+		(0.238)
+		
+Observations		24,856
+R-squared		0.020
+Robust standard errors in parentheses		
+$^{***}$ p<0.01, $^{**}$ p<0.05, $^{*}$ p<0.1		
