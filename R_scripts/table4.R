@@ -1,5 +1,5 @@
 ###################################################################
-##line 429 might cause the program to stop. Just start again at line 431 for the rest###
+
 userdir <- "C:/Users/121685/Desktop/Development_Replication"
 rep_files <- file.path(userdir, "AEJApplied_20150548_replication/dta")
 rep_code <- file.path(userdir, "AEJApplied_20150548_replication/R_scripts")
@@ -386,11 +386,22 @@ print(column_4)
 
 #################################################################3
 
-# Assign "id" variable to correctly label estimates (1) and SEs (2)
-for (df in list(column_1, column_2, column_3, column_4)) {
-  df$id <- rep(c(1, 2), times = nrow(df) / 2)
-  df$group <- rep(1:(nrow(df) / 2), each = 2)
-}
+# Store data frames in a list
+df_list <- list(column_1, column_2, column_3, column_4)
+
+# Iterate through the list and modify each data frame correctly
+df_list <- lapply(df_list, function(df) {
+  df$id <- rep(c(1, 2), times = nrow(df) / 2)  # Assign "id" (1 = estimate, 2 = SE)
+  df$group <- rep(1:(nrow(df) / 2), each = 2)  # Assign "group" to pairs
+  return(df)
+})
+
+# Reassign modified data frames back to their original names
+column_1 <- df_list[[1]]
+column_2 <- df_list[[2]]
+column_3 <- df_list[[3]]
+column_4 <- df_list[[4]]
+
 
 # Efficient merging of all columns into a final dataset
 final_merged <- Reduce(function(x, y) full_join(x, y, by = c("var_name", "group", "id")), 
@@ -462,19 +473,20 @@ saveWorkbook(wb, TABOUT, overwrite = TRUE)
 
 cat("Table_4 replicated to:", TABOUT, "\n")
 
-############latex#################
+############latex#############################################
 library(kableExtra)
 library(dplyr)
 
 # Ensure column names match expected LaTeX format (allowing repeated names for display)
 colnames(final_merged) <- c("Variable", rep(c("2008", "2005"), 4)) 
 
-# Generate LaTeX table with proper multi-column headers
+
 latex_table <- final_merged %>%
-  kbl(booktabs = TRUE, format = "latex", align = "c", escape = TRUE) %>%  # Ensure escaping special characters
+  kbl(booktabs = TRUE, format = "latex", align = "c", escape = FALSE) %>%  # Disable escaping
   add_header_above(c(" " = 1, "SU-LPM" = 4, "Bivariate probit" = 4)) %>%
   add_header_above(c(" " = 1, "(1)" = 2, "(2)" = 2, "(3)" = 2, "(4)" = 2)) %>%
-  kable_styling(latex_options = c("hold_position", "striped"))
+  kable_styling(latex_options = c("hold_position"))
+
 
 # Define output path for LaTeX file
 TABOUT_TEX <- gsub("\\.xlsx$", ".tex", TABOUT)  # Replace .xlsx with .tex in output path
