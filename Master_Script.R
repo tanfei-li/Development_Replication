@@ -1,9 +1,12 @@
 rm(list = ls())
+Sys.setenv(LANGUAGE="en")
+Sys.setlocale("LC_ALL", "en_US.UTF-8")  # Adjust to your system's locale
 
 # List of required packages
 required_packages <- c("sampleSelection", "mvtnorm", "MASS", "systemfit", "sandwich", 
                        "lmtest", "boot", "dplyr", "tidyr", "stringr", "readr", 
-                       "openxlsx", "maxLik", "miscTools", "tidyverse", "haven", "fixest", "brglm2", "flextable")
+                       "openxlsx", "maxLik", "miscTools", "tidyverse", "haven", "fixest", "brglm2", 
+                       "flextable", "lfe", "clubSandwich","pbivnorm","glmnet")
 
 # Identify missing packages
 new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
@@ -31,6 +34,11 @@ library(haven)            # Read Stata, SPSS, and SAS files
 library(fixest)           # Fixed effects regressions (similar to `feols` in Stata) - haven't explored it yet
 library(brglm2)           # For the two-step appraoch
 library(flextable)
+library(lfe)
+library(clubSandwich)
+library(pbivnorm)
+library(glmnet)
+library(kableExtra)
 
 
 
@@ -40,7 +48,7 @@ rep_files <- file.path(userdir, "dta")
 rep_code <- file.path(userdir, "R_scripts")
 output <- file.path(userdir, "rep_output")
 
-# Load estimation functions (assuming it's an R script, otherwise needs translation)
+# Load estimation functions
 source(file.path(rep_code, "estimation-programs.R")) 
 
 
@@ -90,7 +98,7 @@ p8rF <- c("P_rice_y5m4_y8m3", "P448lambda", "shareHHaboveXpr8")
 pDrF <- c("delta_RP_diff", "P44Dlambda", "shareHHaboveXprD")
 
 # Dependent variable
-M <- "d_ln_emig_shr"
+M <- c("d_ln_emig_shr")
 
 # Instruments
 Z5 <- c("lnVinSD", "lnAinSD", "lnN5inSD", "lnpop5")
@@ -109,3 +117,5 @@ cluster_var <- "district"  # Clustering variable
 ##############################
 
 source(file.path(rep_code, "table4.R")) 
+source(file.path(rep_code, "table5.R")) 
+source(file.path(rep_code, "table6.R")) 

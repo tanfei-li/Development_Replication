@@ -1,18 +1,16 @@
 
 cap program drop POIRIER
 program define POIRIER
-	syntax [varlist(fv)] [, EForm(string) Level(real 95) ] //define the expected inputs. [varlist(fv)] means the program can take an optional list of variables, including factor variables (fv). EForm(string): Allows an optional string input for exponential form (e.g., odds ratios). Level(real 95): Specifies the confidence level (default 95%)
+	syntax [varlist(fv)] [, EForm(string) Level(real 95) ] 
 	cap drop kappa*
 	cap drop xb*
 		
-	noi cap  biprobit (Mt8 = $X8 $Z8 $FE) (Mt5 = $X5 $Z5 $FE) $IFEXT ////biprobit (Mt8 = ...) (Mt5 = ...) estimates a bivariate probit model, meaning two binary dependent variables (Mt8 and Mt5) are modeled jointly.
-////noi (short for noisily) ensures any error message is displayed.
-///cap (capture) prevents Stata from stopping execution if an error occurs.
-	predict xb1 if e(sample), xb1 //generate linear predictions 
+	noi cap  biprobit (Mt8 = $X8 $Z8 $FE) (Mt5 = $X5 $Z5 $FE) $IFEXT 
+	predict xb1 if e(sample), xb1 
 	predict xb2 if e(sample), xb2
 	gen kappa8 = (normalden(xb1)*normal((xb2-(e(rho))*xb1)/((1-(e(rho))^2)^(1/2))))/binormal(xb1,xb2,(e(rho))) 
 	gen kappa5 = (normalden(xb2)*normal((xb1-(e(rho))*xb2)/((1-(e(rho))^2)^(1/2))))/binormal(xb1,xb2,(e(rho)))
-	global kap kappa8 kappa5 //calculating the inverse mill ratios 
+	global kap kappa8 kappa5 
 	
 	qui reg $M $X $kap $FE _J* $IF, cluster($CLU)
 	
