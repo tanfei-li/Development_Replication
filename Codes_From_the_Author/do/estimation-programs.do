@@ -1,16 +1,22 @@
 
+
+***************************************************************************
+**********************************POIRIER**********************************
+***************************************************************************
 cap program drop POIRIER
 program define POIRIER
-	syntax [varlist(fv)] [, EForm(string) Level(real 95) ] 
+	syntax [varlist(fv)] [, EForm(string) Level(real 95) ]
 	cap drop kappa*
 	cap drop xb*
 		
-	noi cap  biprobit (Mt8 = $X8 $Z8 $FE) (Mt5 = $X5 $Z5 $FE) $IFEXT 
-	predict xb1 if e(sample), xb1 
+	noi cap  biprobit (Mt8 = $X8 $Z8 $FE) (Mt5 = $X5 $Z5 $FE) $IFEXT
+	predict xb1 if e(sample), xb1
 	predict xb2 if e(sample), xb2
-	gen kappa8 = (normalden(xb1)*normal((xb2-(e(rho))*xb1)/((1-(e(rho))^2)^(1/2))))/binormal(xb1,xb2,(e(rho))) 
+	gen kappa8 = (normalden(xb1)*normal((xb2-(e(rho))*xb1)/((1-(e(rho))^2)^(1/2))))/binormal(xb1,xb2,(e(rho)))
+	
+	
 	gen kappa5 = (normalden(xb2)*normal((xb1-(e(rho))*xb2)/((1-(e(rho))^2)^(1/2))))/binormal(xb1,xb2,(e(rho)))
-	global kap kappa8 kappa5 
+	global kap kappa8 kappa5
 	
 	qui reg $M $X $kap $FE _J* $IF, cluster($CLU)
 	

@@ -59,16 +59,17 @@ Z8 <- c("lnVinSD", "lnAinSD", "lnN8inSD", "lnpop8")
 
 
 # Define covariate sets (X5, X8, X) for Column 1
-X5_1 <- c("pptkis", R, C, C2, S, p5r, rainS5,  "P345Xpptkis_q1", "rain345Xpptkis_q1")
-X8_1 <- c("pptkis", R, C, C2, S, p8r, rainS8, "P678Xpptkis_q1", "rain678Xpptkis_q1")
-X_1  <- c("pptkis", R, C, C2, S, pDr, rainD, "PDXpptkis_q1", "rainDXpptkis_q1")
+
+X5_1 <- c("pptkis", R, C, C2, S, "P345Xpptkis_q0", "P345Xpptkis_q1", "rain345Xpptkis_q0","rain345Xpptkis_q1")
+X8_1 <- c("pptkis", R, C, C2, S, "P678Xpptkis_q0","P678Xpptkis_q1", "rain678Xpptkis_q0", "rain678Xpptkis_q1")
+X_1  <- c("pptkis", R, C, C2, S, "PDXpptkis_q0","PDXpptkis_q1", "rainDXpptkis_q0","rainDXpptkis_q1")
 
 # Define parameters to extract from regression
-BETA_1 <- c("rainDXpptkis_q1" , rainD, "PDXpptkis_q1", pDr)
+BETA_1 <- c("rainDXpptkis_q1" , "rainDXpptkis_q0" , "PDXpptkis_q1", "PDXpptkis_q0")
 
 
-boot_1 <- BOOTtse_6(data, 
-                  EST = DNV_6, 
+boot_1 <- BOOTtse(data, 
+                  EST = DNV, Mt5 = "Mt5", Mt8 = "Mt8",
                   X8 = X8_1, Z8 = Z8, 
                   X5 = X5_1, Z5 = Z5, 
                   X = X_1, 
@@ -76,9 +77,8 @@ boot_1 <- BOOTtse_6(data,
                   M = M, 
                   FE_vars = FE_vars, 
                   J_vars = J_vars, 
-                  cluster_var = "district", 
                   BETA = BETA_1, 
-                  REPS = 1000, 
+                  REPS = 500, 
                   output_file = "BOOT_DATA_col1.csv")
 
 
@@ -92,26 +92,26 @@ results <- list()
 ###################################################################
 
 # Define X5, X8, and X, omitting gdpQt_q1 (baseline)
-X5_2 <- c("gdpQt_q2", "gdpQt_q3", "gdpQt_q4", R, C, C2, S, p5r, rainS5,
-          "P345XgdpQt_q2", "P345XgdpQt_q3", "P345XgdpQt_q4", 
-          "rain345XgdpQt_q2", "rain345XgdpQt_q3", "rain345XgdpQt_q4")
+X5_2 <- c("gdpQt_q2", "gdpQt_q3", "gdpQt_q4", R, C, C2, S,
+          "P345XgdpQt_q1", "P345XgdpQt_q2", "P345XgdpQt_q3", "P345XgdpQt_q4", 
+          "rain345XgdpQt_q1","rain345XgdpQt_q2", "rain345XgdpQt_q3", "rain345XgdpQt_q4")
 
-X8_2 <- c("gdpQt_q2", "gdpQt_q3", "gdpQt_q4", R, C, C2, S, p8r, rainS8,
-          "P678XgdpQt_q2", "P678XgdpQt_q3", "P678XgdpQt_q4", 
-          "rain678XgdpQt_q2", "rain678XgdpQt_q3", "rain678XgdpQt_q4")
+X8_2 <- c("gdpQt_q2", "gdpQt_q3", "gdpQt_q4", R, C, C2, S,
+          "P678XgdpQt_q1","P678XgdpQt_q2", "P678XgdpQt_q3", "P678XgdpQt_q4", 
+          "rain678XgdpQt_q1","rain678XgdpQt_q2", "rain678XgdpQt_q3", "rain678XgdpQt_q4")
 
-X_2  <- c("gdpQt_q2", "gdpQt_q3", "gdpQt_q4", R, C, C2, S, pDr, rainD,
-          "PDXgdpQt_q2", "PDXgdpQt_q3", "PDXgdpQt_q4", 
-          "rainDXgdpQt_q2", "rainDXgdpQt_q3", "rainDXgdpQt_q4")
+X_2  <- c("gdpQt_q2", "gdpQt_q3", "gdpQt_q4", R, C, C2, S,
+          "PDXgdpQt_q1","PDXgdpQt_q2", "PDXgdpQt_q3", "PDXgdpQt_q4", 
+          "rainDXgdpQt_q1", "rainDXgdpQt_q2", "rainDXgdpQt_q3", "rainDXgdpQt_q4")
 
 # Parameters to extract from regression
-BETA_2 <- c(pDr, "PDXgdpQt_q2", "PDXgdpQt_q3", "PDXgdpQt_q4", rainD,
-            "rainDXgdpQt_q2", "rainDXgdpQt_q3", "rainDXgdpQt_q4")
+BETA_2 <- c("PDXgdpQt_q1","PDXgdpQt_q2", "PDXgdpQt_q3", "PDXgdpQt_q4", 
+            "rainDXgdpQt_q1", "rainDXgdpQt_q2", "rainDXgdpQt_q3", "rainDXgdpQt_q4")
 
 
 
-boot_2 <- BOOTtse_6(data, 
-                    EST = DNV_6, 
+boot_2 <- BOOTtse(data = data,
+                    EST = DNV, Mt5 = "Mt5", Mt8 = "Mt8",
                     X8 = X8_2, Z8 = Z8, 
                     X5 = X5_2, Z5 = Z5, 
                     X = X_2, 
@@ -119,10 +119,9 @@ boot_2 <- BOOTtse_6(data,
                     M = M, 
                     FE_vars = FE_vars, 
                     J_vars = J_vars, 
-                    cluster_var = "district", 
                     BETA = BETA_2, 
-                    REPS = 1000, 
-                    output_file = "BOOT_DATA_col1.csv")
+                    REPS = 500, 
+                    output_file = "BOOT_DATA_col2.csv")
 
 
 
@@ -140,15 +139,18 @@ library(kableExtra)
 #------------------------------
 
 results[[1]] <- data.frame(
-  variable = BETA_1, 
-  coefficient = round(boot_1$bootstrap_ci$BETA, 3),  # Keep as numeric
-  standard_error = round(boot_1$bootstrap_ci$SE, 3)  # Keep as numeric
+  variable = BETA_1,
+  coefficient = round(coef(boot_1$original_model$model)[BETA_1], 3),  # Extract original coefficients
+  standard_error = round(summary(boot_1$original_model$model)$coefficients[BETA_1, "Cluster s.e."], 3)  # Extract clustered SEs
 )
+
+
 results[[2]] <- data.frame(
-  variable = BETA_2, 
-  coefficient = round(boot_2$bootstrap_ci$BETA, 3),  # Keep as numeric
-  standard_error = round(boot_2$bootstrap_ci$SE, 3)  # Keep as numeric
+  variable = BETA_2,
+  coefficient = round(coef(boot_2$original_model$model)[BETA_2], 3),  # Extract original coefficients
+  standard_error = round(summary(boot_2$original_model$model)$coefficients[BETA_2, "Cluster s.e."], 3)  # Extract clustered SEs
 )
+
 
 # Set output file paths
 output_combined_xlsx <- file.path(output, "table6.xlsx")
@@ -169,16 +171,16 @@ results[[2]] <- results[[2]] %>%
 # Create a named vector for variable name mapping to LaTeX
 var_label_map <- c(
   "rainDXpptkis_q1" = "$\\Delta$ rainfall shock $\\times$ recruiter presence",
-  "rain_cumdev_diff" = "$\\Delta$ rainfall shock $\\times$ no recruiter presence",
+  "rainDXpptkis_q0" = "$\\Delta$ rainfall shock $\\times$ no recruiter presence",
   "PDXpptkis_q1" = "$\\Delta$ price shock $\\times$ recruiter presence",
-  "delta_RP_diff" = "$\\Delta$ price shock $\\times$ no recruiter presence",
+  "PDXpptkis_q0" = "$\\Delta$ price shock $\\times$ no recruiter presence",
   
-  "delta_RP_diff_2" = "$\\Delta$ price shock $\\times$ agricultural GDP, quartile = 1",
+  "PDXgdpQt_q1" = "$\\Delta$ price shock $\\times$ agricultural GDP, quartile = 1",
   "PDXgdpQt_q2" = "$\\Delta$ price shock $\\times$ agricultural GDP, quartile = 2",
   "PDXgdpQt_q3" = "$\\Delta$ price shock $\\times$ agricultural GDP, quartile = 3",
   "PDXgdpQt_q4" = "$\\Delta$ price shock $\\times$ agricultural GDP, quartile = 4",
   
-  "rain_cumdev_diff_2" = "$\\Delta$ rainfall shock $\\times$ agricultural GDP, quartile = 1",
+  "rainDXgdpQt_q1" = "$\\Delta$ rainfall shock $\\times$ agricultural GDP, quartile = 1",
   "rainDXgdpQt_q2" = "$\\Delta$ rainfall shock $\\times$ agricultural GDP, quartile = 2",
   "rainDXgdpQt_q3" = "$\\Delta$ rainfall shock $\\times$ agricultural GDP, quartile = 3",
   "rainDXgdpQt_q4" = "$\\Delta$ rainfall shock $\\times$ agricultural GDP, quartile = 4"

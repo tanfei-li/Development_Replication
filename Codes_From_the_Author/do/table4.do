@@ -17,7 +17,6 @@ use "$rep_files/mainvillageregs", clear
 	
 	bootstrap, reps(500) cluster(district): sureg (Mt8 $ZX8 $FE) (Mt5 $ZX5 $FE)
 	$out replace keep(lnplant_sawahMaxP1 lnplant_sawahMinP1 lnN8inSD lnN5inSD lnAinSD ln_dist_keccap ln_ddist_emigctr $p8r $p5r $rainS5 $rainS8)
-	
 		
 	*COLUMN 2
 	global Z5 lnVinSD lnAinSD lnN5inSD lnpop5 

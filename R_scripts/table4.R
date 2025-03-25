@@ -18,21 +18,46 @@ Z8 <- c("lnVinSD", "lnAinSD", "lnN8inSD", "lnplant_sawahMinP1", "lnplant_sawahMa
 ZX5 <- c(C, C2, S, p5r, rainS5, "shareHH_aboveRminRany", "paddy_farmland_shr_5", Z5)
 ZX8 <- c(C, C2, S, p8r, rainS8, "shareHH_aboveRminRany", "paddy_farmland_shr_5", Z8)
 
-# Define the SUR model equations
-formula_Mt8 <- as.formula(paste("Mt8 ~", paste(ZX8, collapse = " + "), "+", FE_vars))
-formula_Mt5 <- as.formula(paste("Mt5 ~", paste(ZX5, collapse = " + "), "+", FE_vars))
 
-# Function for bootstrapping the SUR model with clustering at the district level
-# Define a function for bootstrapping with clustering
-boot_sureg_run1 <- function(data, indices) {
-  d <- data[indices, ]  # Resample data
-  model <- systemfit(list(eq1 = formula_Mt8, eq2 = formula_Mt5), data = d, method = "SUR")
-  return(coef(model))
+####Clean Data ####
+required_vars <- c(ZX5, ZX8, "Mt5", "Mt8", "prop", "district")
+data_cleaned <- data[complete.cases(data[, required_vars]), ]
+n_col1 = nrow(data_cleaned) #save village count for col 1
+
+data_cleaned$ZX5 <- as.matrix(data_cleaned[, c(ZX5)])
+data_cleaned$ZX8 <- as.matrix(data_cleaned[, c(ZX8)])
+
+# Convert 'prop' to a factor for FE_vars
+data_cleaned$FE_vars <- as.factor(data_cleaned$prop)
+
+# Define the two equations (Mt8 and Mt5 models)
+eq1 <- Mt8 ~ ZX8 + FE_vars
+eq2 <- Mt5 ~ ZX5 + FE_vars
+
+# Combine the equations into a system
+system <- list(eq1 = eq1, eq2 = eq2)
+
+
+# Define the bootstrap function
+sureg_boot_function <- function(data, indices) {
+  data_boot <- data[indices, ]
+  data_boot$ZX5 <- as.matrix(data_boot[, c(ZX5)])
+  data_boot$ZX8 <- as.matrix(data_boot[, c(ZX8)])
+  data_boot$FE_vars <- as.factor(data_boot$prop)
+  
+  eq1 <- Mt8 ~ ZX8 + FE_vars
+  eq2 <- Mt5 ~ ZX5 + FE_vars
+  system <- list(eq1 = eq1, eq2 = eq2)
+  
+  sureg_model_boot <- systemfit(system, method = "SUR", data = data_boot)
+  return(coef(sureg_model_boot))  # Return coefficients or any other desired statistic
 }
 
-# Perform bootstrapping with clustering at the district level
+# Perform bootstrapping with resampling at the village level within each district
 set.seed(10101)  # Ensure reproducibility
-boot_run1 <- boot(data, boot_sureg_run1, R = 500, strata = data$district)
+boot_run1 <- boot(data_cleaned, sureg_boot_function, R = 500, strata = data_cleaned$district)
+
+
 
 ######arranging output###############################################
 #####################################################################
@@ -41,20 +66,20 @@ boot_coefs_1 <-as.data.frame(boot_run1$t)
 colnames(boot_coefs_1) <- names(boot_run1$t0)
   
 # Select variables for output
-vars_2008_run1 <- c("eq1_lnplant_sawahMaxP1", "eq1_lnplant_sawahMinP1", 
-                 "eq1_lnN8inSD", "eq1_lnAinSD", 
-                 "eq1_ln_dist_keccap", "eq1_ln_ddist_emigctr", 
-                 "eq1_P_rice_y5m4_y8m3", "eq1_rain_cumdev678")
+vars_2008_run1 <- c("eq1_ZX8lnplant_sawahMaxP1", "eq1_ZX8lnplant_sawahMinP1", 
+                 "eq1_ZX8lnN8inSD", "eq1_ZX8lnAinSD", 
+                 "eq1_ZX8ln_dist_keccap", "eq1_ZX8ln_ddist_emigctr", 
+                 "eq1_ZX8P_rice_y5m4_y8m3", "eq1_ZX8rain_cumdev678")
 
 # Remove the "eq1_" prefix from all variable names
-vars_2008_run1_renamed <- gsub("^eq1_", "", vars_2008_run1)
+vars_2008_run1_renamed <- gsub("^eq1_ZX8", "", vars_2008_run1)
 
 
 
-vars_2005_run1 <- c("eq2_lnplant_sawahMaxP1", "eq2_lnplant_sawahMinP1", 
-               "eq2_lnN5inSD", "eq2_lnAinSD", 
-               "eq2_ln_dist_keccap", "eq2_ln_ddist_emigctr", 
-               "eq2_P_rice_y2m1_y5m3", "eq2_rain_cumdev345")
+vars_2005_run1 <- c("eq2_ZX5lnplant_sawahMaxP1", "eq2_ZX5lnplant_sawahMinP1", 
+               "eq2_ZX5lnN5inSD", "eq2_ZX5lnAinSD", 
+               "eq2_ZX5ln_dist_keccap", "eq2_ZX5ln_ddist_emigctr", 
+               "eq2_ZX5P_rice_y2m1_y5m3", "eq2_ZX5rain_cumdev345")
 
 # extracting var labels of the vars_2008_run1_renamed
 var_labels_2008_run1 <- sapply(vars_2008_run1_renamed, function(var) {
@@ -89,12 +114,7 @@ column_1 <- data.frame(
   `2005` = c(t(boot_summary_2005[, c("Estimate_2005_Run1", "SE_2005_Run1")]))
 )
 
-vars_col1 <- unique(c("Mt8", "Mt5", ZX8, ZX5, FE_vars))
-n_col1 <- data %>% 
-    dplyr::select(all_of(vars_col1)) %>% 
-    drop_na() %>% 
-     nrow()
-print(n_col1)
+
 ################################column 2#################
 ################################ Column 2 #################
 
@@ -105,42 +125,52 @@ Z8 <- c("lnVinSD", "lnAinSD", "lnN8inSD", "lnpop8")
 ZX5 <- c(C, C2, S, p5r, rainS5, "Rlambda", "shareHH_aboveRminRany", "paddy_farmland_shr_5", Z5)
 ZX8 <- c(C, C2, S, p8r, rainS8, "Rlambda", "shareHH_aboveRminRany", "paddy_farmland_shr_5", Z8)
 
-# Define the SUR model equations
-formula_Mt8 <- as.formula(paste("Mt8 ~", paste(ZX8, collapse = " + "), "+", FE_vars))
-formula_Mt5 <- as.formula(paste("Mt5 ~", paste(ZX5, collapse = " + "), "+", FE_vars))
+# Clean Data 
+required_vars <- c(ZX5, ZX8, "Mt5", "Mt8", "prop", "district")
+data_cleaned <- data[complete.cases(data[, required_vars]), ]
+n_col2 = nrow(data_cleaned) #save village count for col 2
 
-# Estimate the Seemingly Unrelated Regression (SUR) model
-sureg_model_run2 <- systemfit(list(eq1 = formula_Mt8, eq2 = formula_Mt5), data = data, method = "SUR")
+data_cleaned$ZX5 <- as.matrix(data_cleaned[, c(ZX5)])
+data_cleaned$ZX8 <- as.matrix(data_cleaned[, c(ZX8)])
 
-# Define a function for bootstrapping the SUR model with clustering at the district level
-boot_sureg_run2 <- function(data, indices) {
-  d <- data[indices, ]  # Resample data
-  model <- systemfit(list(eq1 = formula_Mt8, eq2 = formula_Mt5), data = d, method = "SUR")
-  return(coef(model))
-}
+# Convert 'prop' to a factor for FE_vars
+data_cleaned$FE_vars <- as.factor(data_cleaned$prop)
+
+# Define the two equations (Mt8 and Mt5 models)
+eq1 <- Mt8 ~ ZX8 + FE_vars
+eq2 <- Mt5 ~ ZX5 + FE_vars
+
+# Combine the equations into a system
+system <- list(eq1 = eq1, eq2 = eq2)
+
 
 # Perform bootstrapping with clustering at the district level
 set.seed(10101)  # Ensure reproducibility
-boot_run2 <- boot(data, boot_sureg_run2, R = 500, strata = data$district)
+boot_run2 <- boot(data_cleaned, sureg_boot_function, R = 50, strata = data_cleaned$district)
+
+# View the bootstrap results
+print(boot_run2)
+
+
 
 # Extract coefficients from the bootstrapped results and attach names
 boot_coefs_2 <- as.data.frame(boot_run2$t)
 colnames(boot_coefs_2) <- names(boot_run2$t0)
 
 # Select specific variables for output
-vars_2008_run2 <- c("eq1_Rlambda", "eq1_lnpop8", "eq1_lnN8inSD", 
-                     "eq1_lnAinSD", "eq1_ln_dist_keccap", 
-                     "eq1_ln_ddist_emigctr", "eq1_P_rice_y5m4_y8m3", 
-                     "eq1_rain_cumdev678")
+vars_2008_run2 <- c("eq1_ZX8Rlambda", "eq1_ZX8lnpop8", "eq1_ZX8lnN8inSD", 
+                     "eq1_ZX8lnAinSD", "eq1_ZX8ln_dist_keccap", 
+                     "eq1_ZX8ln_ddist_emigctr", "eq1_ZX8P_rice_y5m4_y8m3", 
+                     "eq1_ZX8rain_cumdev678")
 
-vars_2005_run2 <- c("eq2_Rlambda", "eq2_lnpop5", "eq2_lnN5inSD",
-                     "eq2_lnAinSD", "eq2_ln_dist_keccap",
-                     "eq2_ln_ddist_emigctr", "eq2_P_rice_y2m1_y5m3",
-                     "eq2_rain_cumdev345")
+vars_2005_run2 <- c("eq2_ZX5Rlambda", "eq2_ZX5lnpop5", "eq2_ZX5lnN5inSD",
+                     "eq2_ZX5lnAinSD", "eq2_ZX5ln_dist_keccap",
+                     "eq2_ZX5ln_ddist_emigctr", "eq2_ZX5P_rice_y2m1_y5m3",
+                     "eq2_ZX5rain_cumdev345")
 
-# Remove the equation prefix ("eq1_" and "eq2_")
-vars_2008_run2_clean <- gsub("^eq1_", "", vars_2008_run2)
-vars_2005_run2_clean <- gsub("^eq2_", "", vars_2005_run2)
+# Remove the equation prefix ("eq1_ZX8" and "eq2_ZX5")
+vars_2008_run2_clean <- gsub("^eq1_ZX8", "", vars_2008_run2)
+vars_2005_run2_clean <- gsub("^eq2_ZX5", "", vars_2005_run2)
 
 # Extract variable labels
 var_labels_2008_run2 <- sapply(vars_2008_run2_clean, function(var) {
@@ -170,109 +200,80 @@ column_2 <- data.frame(
   `2005` = c(t(boot_summary_2005[, c("Estimate_2005_Run2", "SE_2005_Run2")]))
 )
 
-vars_col2 <- unique(c("Mt8", "Mt5", ZX8, ZX5, FE_vars))
-n_col2 <- data %>% 
-  dplyr::select(all_of(vars_col2)) %>% 
-  drop_na() %>% 
-  nrow()
-print(n_col2)
 
-##############################column 3############################
-##################################################################
+
+
 ############################## Column 3 ############################
 ####################################################################
+library(endogeneity)
 
-# Load Required Libraries
-library(glmnet)
-library(sandwich)
-library(lmtest)
-library(dplyr)
-
-#### Step 1: Define Variables ####
+# Define the variables
 Z5 <- c("lnVinSD", "lnAinSD", "lnN5inSD", "lnplant_sawahMinP1", "lnplant_sawahMaxP1")
 Z8 <- c("lnVinSD", "lnAinSD", "lnN8inSD", "lnplant_sawahMinP1", "lnplant_sawahMaxP1")
 
 ZX5 <- c(C, C2, S, p5r, rainS5, "shareHH_aboveRminRany", "paddy_farmland_shr_5", Z5)
 ZX8 <- c(C, C2, S, p8r, rainS8, "shareHH_aboveRminRany", "paddy_farmland_shr_5", Z8)
 
-#### Step 2: Clean Data ####
-required_vars <- c(ZX5, ZX8, "Mt5", "Mt8", "prop")
-data <- data[complete.cases(data[, required_vars]), ]
 
-#### Step 3: Estimate First Probit Model (Mt5) ####
-cat("--> Estimating Probit Model for Mt5...\n")
-probit_Mt5_run3 <- glm(as.formula(paste("Mt5 ~", paste(ZX5, collapse = " + "), "+ prop")),
-                       data = data, family = binomial(link = "probit"))
+####Clean Data ####
+required_vars <- c(ZX5, ZX8, "Mt5", "Mt8", "prop", "district")
+data_cleaned <- data[complete.cases(data[, required_vars]), ]
 
-# Compute Inverse Mills Ratio (IMR)
-data$pred_Mt5_run3 <- predict(probit_Mt5_run3, type = "link")  
-data$lambda_Mt5_run3 <- dnorm(data$pred_Mt5_run3) / pnorm(data$pred_Mt5_run3)  
+####setting independent variables####
 
-#### Step 4: Estimate Second Probit Model (Mt8) ####
-cat("--> Estimating Probit Model for Mt8...\n")
-probit_Mt8_run3 <- glm(as.formula(paste("Mt8 ~", paste(ZX8, collapse = " + "), "+ prop + lambda_Mt5_run3")),
-                       data = data, family = binomial(link = "probit"))
+data_cleaned$ZX5 <- as.matrix(data_cleaned[, c(ZX5)])
+data_cleaned$ZX8 <- as.matrix(data_cleaned[, c(ZX8)])
 
-#### Step 5: Variance-Covariance and Residual Correlation ####
-vcov_Mt5_run3 <- vcov(probit_Mt5_run3)
-vcov_Mt8_run3 <- vcov(probit_Mt8_run3)
+# Convert 'prop' to a factor for FE_vars
+data_cleaned$FE_vars <- as.factor(data_cleaned$prop)
 
-# Residual Correlation (ρ)
-data$resid_Mt5_run3 <- residuals(probit_Mt5_run3, type = "response")
-data$resid_Mt8_run3 <- residuals(probit_Mt8_run3, type = "response")
-rho_estimate_run3 <- cor(data$resid_Mt5_run3, data$resid_Mt8_run3, use = "complete.obs")
-print(paste("Residual correlation (ρ):", rho_estimate_run3))
+# Fit the bivariate probit model
+biprobit_model_3 <- biprobit(
+  Mt8 ~ ZX8 + FE_vars,  # First equation (for Mt8)
+  Mt5 ~ ZX5 + FE_vars,  # Second equation (for Mt5)
+  data = data_cleaned           # Data frame
+)
 
-# Cross-equation covariance terms
-cross_terms_run3 <- rho_estimate_run3 * sqrt(diag(vcov_Mt5_run3) %*% t(diag(vcov_Mt8_run3)))
 
-# Construct Joint Variance-Covariance Matrix
-k_Mt5_run3 <- length(coef(probit_Mt5_run3))
-k_Mt8_run3 <- length(coef(probit_Mt8_run3))
-
-joint_vcov_run3 <- matrix(0, nrow = k_Mt5_run3 + k_Mt8_run3, ncol = k_Mt5_run3 + k_Mt8_run3)
-joint_vcov_run3[1:k_Mt5_run3, 1:k_Mt5_run3] <- vcov_Mt5_run3
-joint_vcov_run3[(k_Mt5_run3+1):(k_Mt5_run3+k_Mt8_run3), (k_Mt5_run3+1):(k_Mt5_run3+k_Mt8_run3)] <- vcov_Mt8_run3
-joint_vcov_run3[1:k_Mt5_run3, (k_Mt5_run3+1):(k_Mt5_run3+k_Mt8_run3)] <- cross_terms_run3
-joint_vcov_run3[(k_Mt5_run3+1):(k_Mt5_run3+k_Mt8_run3), 1:k_Mt5_run3] <- t(cross_terms_run3)
-
-# Assign names
-names_Mt5 <- names(coef(probit_Mt5_run3))
-names_Mt8 <- names(coef(probit_Mt8_run3))
-joint_names <- c(names_Mt5, names_Mt8)
-rownames(joint_vcov_run3) <- joint_names
-colnames(joint_vcov_run3) <- joint_names
 
 #### Step 6: Prepare Results Table ####
-vars_2008_run3 <- c("lnplant_sawahMaxP1", "lnplant_sawahMinP1", "lnN8inSD", "lnAinSD", 
-                    "ln_dist_keccap", "ln_ddist_emigctr", p8r, rainS8)
+vars_2008_run3 <- c("1ZX8lnplant_sawahMaxP1", "1ZX8lnplant_sawahMinP1", "1ZX8lnN8inSD", "1ZX8lnAinSD", 
+                    "1ZX8ln_dist_keccap", "1ZX8ln_ddist_emigctr",  "1ZX8P_rice_y5m4_y8m3", "1ZX8rain_cumdev678")
 
-vars_2005_run3 <- c("lnplant_sawahMaxP1", "lnplant_sawahMinP1", "lnN5inSD", "lnAinSD", 
-                    "ln_dist_keccap", "ln_ddist_emigctr", p5r, rainS5)
 
-# Extract coefficients and SEs properly
-est_mt8_run3 <- coef(probit_Mt8_run3)[vars_2008_run3]
-est_mt5_run3 <- coef(probit_Mt5_run3)[vars_2005_run3]
+vars_2005_run3 <- c("ZX5lnplant_sawahMaxP1", "ZX5lnplant_sawahMinP1", 
+                    "ZX5lnN5inSD", "ZX5lnAinSD", 
+                    "ZX5ln_dist_keccap", "ZX5ln_ddist_emigctr", 
+                    "ZX5P_rice_y2m1_y5m3", "ZX5rain_cumdev345")
 
-se_mt8_run3 <- sqrt(diag(joint_vcov_run3))[match(vars_2008_run3, colnames(joint_vcov_run3))]
-se_mt5_run3 <- sqrt(diag(joint_vcov_run3))[match(vars_2005_run3, colnames(joint_vcov_run3))]
+# Directly extract the variance-covariance matrix from the model object
+vcov_biprobit <- biprobit_model_3$var
 
-# If you have var_labels_2008_run1:
-# var_labels_2008_run1 <- c(...) # Add appropriate variable labels!
+# Check the structure of the variance-covariance matrix
+print(vcov_biprobit)
 
-var_name_repeated <- rep(var_labels_2008_run1, each = 2)  # reuse from Run1
+# Now extract the coefficients and standard errors
+vars_2008_run3_match <- match(vars_2008_run3, names(coef(biprobit_model_3)))
+vars_2005_run3_match <- match(vars_2005_run3, names(coef(biprobit_model_3)))
 
-#### Step 7: Format Output ####
+# Extract coefficients
+est_mt8_run3 <- coef(biprobit_model_3)[vars_2008_run3_match]
+est_mt5_run3 <- coef(biprobit_model_3)[vars_2005_run3_match]
+
+# Compute the standard errors using the square root of the diagonal of the variance-covariance matrix
+se_mt8_run3 <- sqrt(diag(vcov_biprobit)[vars_2008_run3_match])
+se_mt5_run3 <- sqrt(diag(vcov_biprobit)[vars_2005_run3_match])
+
+var_name_repeated <- rep(var_labels_2008_run1, each = 2)
+# Construct the final results table
 column_3 <- data.frame(
   var_name = var_name_repeated,  
   `2008` = c(rbind(sprintf("%.3f", est_mt8_run3), sprintf("(%.3f)", se_mt8_run3))),
   `2005` = c(rbind(sprintf("%.3f", est_mt5_run3), sprintf("(%.3f)", se_mt5_run3)))
 )
 
-#### Step 8: Print Final Table ####
+# Print the final table
 print(column_3)
-print(paste("Residual correlation (ρ):", round(rho_estimate_run3, 3)))
-
 
 
 #########################run 4#####################
@@ -286,103 +287,70 @@ Z8 <- c("lnVinSD", "lnAinSD", "lnN8inSD", "lnpop8")
 ZX5 <- c(C, C2, S, p5r, rainS5, "Rlambda", "shareHH_aboveRminRany", "paddy_farmland_shr_5", Z5)
 ZX8 <- c(C, C2, S, p8r, rainS8, "Rlambda", "shareHH_aboveRminRany", "paddy_farmland_shr_5", Z8)
 
-# Step 0: Identify rows without NA in required variables
-required_vars <- c(ZX5, ZX8, "Mt5", "Mt8", "prop")  # Variables needed for the models
-data <- data[complete.cases(data[, required_vars]), ]  # Retain only complete observations
+####Clean Data ####
+required_vars <- c(ZX5, ZX8, "Mt5", "Mt8", "prop", "district")
+data_cleaned <- data[complete.cases(data[, required_vars]), ]
 
-# Step 1: Estimate First Probit Model (Mt5) Without Firth's Penalty
-cat("--> Estimating Probit Model for Mt5...\n")
-probit_Mt5_run4 <- tryCatch(
-  glm(as.formula(paste("Mt5 ~", paste(ZX5, collapse = " + "), "+ prop")),
-      data = data, family = binomial(link = "probit")),
-  error = function(e) {
-    cat("Warning: Standard probit failed. Switching to regularized probit.\n")
-    cv_model <- cv.glmnet(as.matrix(data[, ZX5]), data$Mt5, family = "binomial", alpha = 0, lambda = 0.01)
-    glmnet_model <- glmnet(as.matrix(data[, ZX5]), data$Mt5, family = "binomial", alpha = 0, lambda = cv_model$lambda.min)
-    return(glmnet_model)
-  }
+####setting independent variables####
+
+data_cleaned$ZX5 <- as.matrix(data_cleaned[, c(ZX5)])
+data_cleaned$ZX8 <- as.matrix(data_cleaned[, c(ZX8)])
+
+# Convert 'prop' to a factor for FE_vars
+data_cleaned$FE_vars <- as.factor(data_cleaned$prop)
+
+# Fit the bivariate probit model
+biprobit_model_4 <- biprobit(
+  Mt8 ~ ZX8 + FE_vars,  # First equation (for Mt8)
+  Mt5 ~ ZX5 + FE_vars,  # Second equation (for Mt5)
+  data = data_cleaned           # Data frame
 )
 
-# Compute the Inverse Mills Ratio (IMR) Using Mt5
-data$pred_Mt5_run4 <- predict(probit_Mt5_run4, type = "link")  
-data$lambda_Mt5_run4 <- dnorm(data$pred_Mt5_run4) / pnorm(data$pred_Mt5_run4)  
+#### Step 6: Prepare Results Table ####
 
-# Step 2: Estimate Second Probit Model (Mt8) Including IMR
-cat("--> Estimating Probit Model for Mt8...\n")
-probit_Mt8_run4 <- tryCatch(
-  glm(as.formula(paste("Mt8 ~", paste(ZX8, collapse = " + "), "+ prop + lambda_Mt5_run4")),
-      data = data, family = binomial(link = "probit")),
-  error = function(e) {
-    cat("Warning: Standard probit failed. Switching to regularized probit.\n")
-    cv_model <- cv.glmnet(as.matrix(data[, ZX8]), data$Mt8, family = "binomial", alpha = 0, lambda = 0.01)
-    glmnet_model <- glmnet(as.matrix(data[, ZX8]), data$Mt8, family = "binomial", alpha = 0, lambda = cv_model$lambda.min)
-    return(glmnet_model)
-  }
-)
 
-# Compute Variance-Covariance Matrices
-vcov_Mt5_run4 <- vcov(probit_Mt5_run4)  
-vcov_Mt8_run4 <- vcov(probit_Mt8_run4)  
+vars_2008_run4 <- c("1ZX8Rlambda", "1ZX8lnpop8", "1ZX8lnN8inSD", 
+                    "1ZX8lnAinSD", "1ZX8ln_dist_keccap", 
+                    "1ZX8ln_ddist_emigctr", "1ZX8P_rice_y5m4_y8m3", 
+                    "1ZX8rain_cumdev678")
 
-# Compute Residual Correlation (ρ)
-data$resid_Mt5_run4 <- residuals(probit_Mt5_run4, type = "response")
-data$resid_Mt8_run4 <- residuals(probit_Mt8_run4, type = "response")
+vars_2005_run4 <- c("ZX5Rlambda", "ZX5lnpop5", "ZX5lnN5inSD",
+                    "ZX5lnAinSD", "ZX5ln_dist_keccap",
+                    "ZX5ln_ddist_emigctr", "ZX5P_rice_y2m1_y5m3",
+                    "ZX5rain_cumdev345")
 
-rho_estimate_run4 <- cor(data$resid_Mt5_run4, data$resid_Mt8_run4, use = "complete.obs")
-print(paste("Residual correlation (ρ):", rho_estimate_run4))
+# Directly extract the variance-covariance matrix from the model object
+vcov_biprobit <- biprobit_model_4$var
 
-# Compute cross-equation covariance terms using ρ
-cross_terms_run4 <- rho_estimate_run4 * sqrt(diag(vcov_Mt5_run4) %*% t(diag(vcov_Mt8_run4)))
+# Check the structure of the variance-covariance matrix
+print(vcov_biprobit)
 
-# Construct Corrected Variance-Covariance Matrix
-k_Mt5_run4 <- length(coef(probit_Mt5_run4))
-k_Mt8_run4 <- length(coef(probit_Mt8_run4))
+# Now extract the coefficients and standard errors
+vars_2008_run4_match <- match(vars_2008_run4, names(coef(biprobit_model_4)))
+vars_2005_run4_match <- match(vars_2005_run4, names(coef(biprobit_model_4)))
 
-joint_vcov_run4 <- matrix(0, nrow = k_Mt5_run4 + k_Mt8_run4, ncol = k_Mt5_run4 + k_Mt8_run4)
+# Extract coefficients
+est_mt8_run4 <- coef(biprobit_model_4)[vars_2008_run4_match]
+est_mt5_run4 <- coef(biprobit_model_4)[vars_2005_run4_match]
 
-# Fill diagonal blocks with individual variance-covariance matrices
-joint_vcov_run4[1:k_Mt5_run4, 1:k_Mt5_run4] <- vcov_Mt5_run4
-joint_vcov_run4[(k_Mt5_run4+1):(k_Mt5_run4+k_Mt8_run4), (k_Mt5_run4+1):(k_Mt5_run4+k_Mt8_run4)] <- vcov_Mt8_run4
-
-# Insert cross-equation covariance terms
-joint_vcov_run4[1:k_Mt5_run4, (k_Mt5_run4+1):(k_Mt5_run4+k_Mt8_run4)] <- cross_terms_run4
-joint_vcov_run4[(k_Mt5_run4+1):(k_Mt5_run4+k_Mt8_run4), 1:k_Mt5_run4] <- t(cross_terms_run4)
-
-# Apply names for clarity
-names_Mt5_run4 <- names(coef(probit_Mt5_run4))
-names_Mt8_run4 <- names(coef(probit_Mt8_run4))
-rownames(joint_vcov_run4) <- c(names_Mt5_run4, names_Mt8_run4)
-colnames(joint_vcov_run4) <- c(names_Mt5_run4, names_Mt8_run4)
-
-# Step 7: Prepare Results Table
-vars_2008_run4 <- c("Rlambda", "lnpop8", "lnN8inSD", "lnAinSD", 
-                    "ln_dist_keccap", "ln_ddist_emigctr", "P_rice_y5m4_y8m3", "rain_cumdev678")
-
-vars_2005_run4 <- c("Rlambda", "lnpop5", "lnN5inSD", "lnAinSD", 
-                    "ln_dist_keccap", "ln_ddist_emigctr", "P_rice_y2m1_y5m3", "rain_cumdev345")
-
-# Extract available coefficients
-vars_mt8_available_run4 <- intersect(vars_2008_run4, rownames(joint_vcov_run4))
-vars_mt5_available_run4 <- intersect(vars_2005_run4, rownames(joint_vcov_run4))
-
-est_mt8_run4 <- coef(probit_Mt8_run4)[vars_mt8_available_run4]
-est_mt5_run4 <- coef(probit_Mt5_run4)[vars_mt5_available_run4]
-
-# Extract Corrected Standard Errors
-se_mt8_run4 <- sqrt(diag(joint_vcov_run4))[vars_mt8_available_run4]
-se_mt5_run4 <- sqrt(diag(joint_vcov_run4))[vars_mt5_available_run4]
+# Compute the standard errors using the square root of the diagonal of the variance-covariance matrix
+se_mt8_run4 <- sqrt(diag(vcov_biprobit)[vars_2008_run4_match])
+se_mt5_run4 <- sqrt(diag(vcov_biprobit)[vars_2005_run4_match])
 
 var_name_repeated <- rep(var_labels_2008_run2, each = 2)
-
-# Step 8: Create a Wide-Format Results Table
+# Construct the final results table
 column_4 <- data.frame(
   var_name = var_name_repeated,  
   `2008` = c(rbind(sprintf("%.3f", est_mt8_run4), sprintf("(%.3f)", se_mt8_run4))),
   `2005` = c(rbind(sprintf("%.3f", est_mt5_run4), sprintf("(%.3f)", se_mt5_run4)))
 )
 
+# Print the final table
+print(column_4)
 
-#################################################################3
+
+
+#################################################################
 
 # Store data frames in a list
 df_list <- list(column_1, column_2, column_3, column_4)
@@ -400,7 +368,7 @@ column_2 <- df_list[[2]]
 column_3 <- df_list[[3]]
 column_4 <- df_list[[4]]
 
-
+library(dplyr)
 # Efficient merging of all columns into a final dataset
 final_merged <- Reduce(function(x, y) full_join(x, y, by = c("var_name", "group", "id")), 
                        list(column_1, column_2, column_3, column_4))
@@ -522,6 +490,7 @@ final_table <- bind_rows(final_merged, empty_row_long)
 # Ensure column names remain consistent for LaTeX
 colnames(final_table) <- c("Variable", rep(c("2008", "2005"), 4))
 
+library(kableExtra)
 # Generate LaTeX table
 latex_table <- final_table %>%
   kable("latex", booktabs = TRUE, linesep = "", escape = FALSE) %>%

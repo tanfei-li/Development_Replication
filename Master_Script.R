@@ -1,49 +1,29 @@
 rm(list = ls())
+
+
 Sys.setenv(LANGUAGE="en")
 Sys.setlocale("LC_ALL", "en_US.UTF-8")  # Adjust to your system's locale
 
-# List of required packages
-required_packages <- c("sampleSelection", "mvtnorm", "MASS", "systemfit", "sandwich", 
-                       "lmtest", "boot", "dplyr", "tidyr", "stringr", "readr", 
-                       "openxlsx", "maxLik", "miscTools", "tidyverse", "haven", "fixest", "brglm2", 
-                       "flextable", "lfe", "clubSandwich","pbivnorm","glmnet")
+# Combined list of required packages (remove duplicates)
+required_packages <- unique(c(
+  "sampleSelection", "mvtnorm", "MASS", "systemfit", "sandwich", 
+  "lmtest", "boot", "dplyr", "tidyr", "stringr", "readr", 
+  "openxlsx", "maxLik", "miscTools", "tidyverse", "haven", 
+  "fixest", "brglm2", "kableExtra", "knitr", "rmarkdown",
+  "tinytex", "htmltools", "xfun", "fastmap", "bslib", "magrittr",
+  "margins", "modelsummary", "broom", "survival", "clubSandwich",
+  "car", "emmeans", "DT", "endogeneity", "flextable", "lfe", "pbivnorm"
+))
 
-# Identify missing packages
-new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
-
-# Install missing packages
+# Identify and install missing packages
+new_packages <- setdiff(required_packages, installed.packages()[, "Package"])
 if (length(new_packages)) install.packages(new_packages)
 
-# Load necessary libraries
-library(sampleSelection)  # For bivariate probit
-library(mvtnorm)          # For bivariate normal functions
-library(MASS)             # For normal density function
-library(systemfit)        # For Seemingly Unrelated Regression (SUR)
-library(sandwich)         # For robust and clustered standard errors
-library(lmtest)           # For statistical testing with robust SEs
-library(boot)             # For bootstrapping
-library(dplyr)            # For data manipulation
-library(tidyr)            # For reshaping data
-library(stringr)          # For string operations
-library(readr)            # For reading/writing CSV files
-library(openxlsx)         # For exporting to Excel
-library(maxLik)           # Required for `sampleSelection`
-library(miscTools)        # Required for `sampleSelection`
-library(tidyverse)        # Collection of useful data science packages
-library(haven)            # Read Stata, SPSS, and SAS files
-library(fixest)           # Fixed effects regressions (similar to `feols` in Stata) - haven't explored it yet
-library(brglm2)           # For the two-step appraoch
-library(flextable)
-library(lfe)
-library(clubSandwich)
-library(pbivnorm)
-library(glmnet)
-library(kableExtra)
-
-
+# Load all libraries in one go
+invisible(lapply(required_packages, library, character.only = TRUE))
 
 # Set working directories //change according to your organisation structure
-userdir <- "C:/Users/121685/Desktop/Development_Replication/AEJApplied_20150548_replication"
+userdir <- "C:/Users/121685/Desktop/Development_Replication/AEJApplied_20150548_replication" #change accordingly
 rep_files <- file.path(userdir, "dta")
 rep_code <- file.path(userdir, "R_scripts")
 output <- file.path(userdir, "rep_output")
@@ -111,11 +91,12 @@ X <- c(R, C, C2, S, pDr, rainD)
 
 # Clustering and Fixed Effects
 J_vars <- "district"  # Fixed effects at the district level
-FE_vars <- "prop"  # Fixed effects (converted from `i.prop`)
+FE_vars <- "prop"
 cluster_var <- "district"  # Clustering variable
 
-##############################
-
+#################run the following scripts for table 1,2,4,5,6#############################
+source(file.path(rep_code, "table1.R")) 
+source(file.path(rep_code, "table2.R")) 
 source(file.path(rep_code, "table4.R")) 
 source(file.path(rep_code, "table5.R")) 
 source(file.path(rep_code, "table6.R")) 
