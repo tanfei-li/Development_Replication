@@ -23,7 +23,7 @@ if (length(new_packages)) install.packages(new_packages)
 invisible(lapply(required_packages, library, character.only = TRUE))
 
 # Set working directories //change according to your organisation structure
-userdir <- "C:/Users/121685/Desktop/Development_Replication/AEJApplied_20150548_replication" #change accordingly
+userdir <- "C:/Users/121685/Desktop/Development_Replication/AEJApplied_20150548_replication/Replication_Package" 
 rep_files <- file.path(userdir, "dta")
 rep_code <- file.path(userdir, "R_scripts")
 output <- file.path(userdir, "rep_output")
